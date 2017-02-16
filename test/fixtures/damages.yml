@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  damage_entry_date: 2016-11-08
+  week_no: 1
+  bags_count: 1
+  warehouse_id: 1
+  isactive: false
+  created_by: 1
+  updated_by: 1
+
+two:
+  damage_entry_date: 2016-11-08
+  week_no: 1
+  bags_count: 1
+  warehouse_id: 1
+  isactive: false
+  created_by: 1
+  updated_by: 1

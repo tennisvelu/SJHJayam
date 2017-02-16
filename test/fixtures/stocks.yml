@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  grade_id: 1
+  book_stock: 1
+  physical_stock: 1
+  warehouse_id: 1
+
+two:
+  grade_id: 1
+  book_stock: 1
+  physical_stock: 1
+  warehouse_id: 1

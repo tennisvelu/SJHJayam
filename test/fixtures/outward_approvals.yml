@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dispatch_date: 2016-11-08 16:34:51
+  patry_name: MyString
+  billing_date: 2016-11-08 16:34:51
+  status: 1
+  outward_id: 1
+  isactive: false
+
+two:
+  dispatch_date: 2016-11-08 16:34:51
+  patry_name: MyString
+  billing_date: 2016-11-08 16:34:51
+  status: 1
+  outward_id: 1
+  isactive: false

@@ -1,0 +1,71 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<link href="/assets/style.css" rel="stylesheet">
+
+<p id="notice"><%= notice %></p>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading" role="tab" id="headingOne"><center><strong class="panel-title h-arrow">Listing Warehouses</center><span title="Create New Warehouse"><%= link_to '<i class="fa fa-plus"></i>'.html_safe,new_warehouse_path,:class=>"icon-button-red", :style=>"text-align:right; background-color:white; color:green;float:right;"%></span></strong></div>
+
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+
+      <div class="table-container">
+
+        <table class="table tab-container">
+     
+          <thead class="tab-header blue" style="background-color: #d81b60;">
+        
+
+
+    <tr>
+      <th>Company Name</th>
+      <th>Warehouse name</th>
+      <th>Email</th>
+      <th>Telephone Number</th>
+      <th>Mobile Number</th>
+      <th>Address</th>
+      <th>Post Code</th>
+     
+      <th colspan="3"><center>Action</center></th>
+      </tr>
+ 
+ 
+  <tbody>
+    <% @warehouses.each do |warehouse| %>
+      <tr>
+        <td style="text-align:left"><%= Company.find(warehouse.company_id).company_name %></td>       
+        <td style="text-align:left"><%= warehouse.warehouse_name %></td>
+        <td style="text-align:left"><%= warehouse.contact.email %></td>
+        <td style="text-align:left"><%= warehouse.contact.telephone_number %></td>
+        <td style="text-align:left"><%= warehouse.contact.mobile_number %></td>
+        <td style="text-align:left"><%= warehouse.address.address1 %></td>
+        <td style="text-align:left"><%= warehouse.address.post_code %></td>
+        
+       
+     <td><%= link_to "<i class='fa fa-eye' aria-hidden='true'></i>".html_safe, warehouse,:class=>"btn-sm btn-default",:title=>"Show #{warehouse.warehouse_name}"%></td>
+        
+                <td><%= link_to "<i class='fa fa-pencil' aria-hidden='true'></i>".html_safe, edit_warehouse_path(warehouse),:class=>"btn-sm btn-default",:title=>"Edit #{warehouse.warehouse_name}" %></td>
+        
+                <td><%if Stock.where(:warehouse_id=>warehouse.id).pluck(:book_stock,:physical_stock).sum==0 && warehouse.users.count==0%><%= link_to "<i class='fa fa-trash-o' aria-hidden='true'></i>".html_safe, warehouse, method: :delete, data: { confirm: 'Are you sure?' },:class=>"btn-sm btn-default",:title=>"Delete #{warehouse.warehouse_name}"%><%end%></td>
+                 
+              </tr>
+    
+            <% end %>
+  
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

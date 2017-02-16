@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<link href="/assets/style.css" rel="stylesheet">
+
+<p id="notice"><%= notice %></p>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading" role="tab" id="headingOne">
+
+      
+
+        
+    </div>
+    <center>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+
+      <div class="table-container" style="width:30%;">
+
+        <table class="table tab-container">
+     
+          <thead class="tab-header blue" style="background-color: #0288d1;">
+
+           <%= link_to '<i class="fa fa-hand-o-right" style="color:#d81b60"></i>'.html_safe,warehouses_path,:class=>"icon-button-red",:title=>"Back", :style=>"text-align:right; background-color:white; color:green;float:right;"%>
+
+            <%= link_to '<i class="fa fa-pencil" style="color:#d81b60"></i>'.html_safe,edit_warehouse_path(@warehouse),:class=>"icon-button-red",:title=>"Edit", :style=>"text-align:right; background-color:white; color:green;float:right;"%>
+
+           </thead><br><br>
+            <center style="background-color:#d81b60;height:30px;color:white"><h4><%=@warehouse.warehouse_name%> Details</h4></center>
+            <tr>      
+             <td style="text-align: left;">Warehouse name</td>
+             <td style="text-align: left;"><%= @warehouse.warehouse_name %></td></tr>
+             <tr><td style="text-align: left;">Email</td>
+             <td style="text-align: left;"><%= @warehouse.contact.email %></td></tr>
+             <tr><td style="text-align: left;">Company Name</td>
+             <td style="text-align: left;"><%= Company.find(@warehouse.company_id).company_name %></td></tr>
+             <tr><td style="text-align: left;">Telephone Number</td>
+             <td style="text-align: left;"><%= @warehouse.contact.telephone_number %></td></tr>   
+             <tr><td style="text-align: left;">Mobile Number</td>
+             <td style="text-align: left;"><%= @warehouse.contact.mobile_number %></td></tr>
+             <tr><td style="text-align: left;">Address</td>
+             <td style="text-align: left;"><%= @warehouse.address.address1 %></td></tr>
+             <tr><td style="text-align: left;">Post Code</td>
+             <td style="text-align: left;"><%= @warehouse.address.post_code %></td></tr>
+             <tr><td style="text-align: left;">City</td>
+             <td style="text-align: left;"><%= @warehouse.address.city %></td></tr>  
+             <tr><td style="text-align: left;">State</td>
+             <td style="text-align: left;"><%= @warehouse.address.state %></td></tr>     
+             <tr><td style="text-align: left;">Country</td>
+             <td style="text-align: left;"><%= @warehouse.address.country %></td>
+             </tr>
+  
+            </table>
+
+      </div>
+
+    </div>
+
+  </div></center>
+
+</div>
+

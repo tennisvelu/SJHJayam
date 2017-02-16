@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  manufacture_week: 2016-11-08 16:48:26
+  week_number: 1
+  quantity: 1
+  grading: MyString
+  packing: MyString
+  inward_id: 1
+  isactive: false
+
+two:
+  manufacture_week: 2016-11-08 16:48:26
+  week_number: 1
+  quantity: 1
+  grading: MyString
+  packing: MyString
+  inward_id: 1
+  isactive: false

@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  truck_number: 1
+  inward_number: 1
+  inward_date: 2016-11-08 16:26:40
+  damage_bags_count: 1
+  return: false
+  total_quantity: 1
+  warehouse_id: 1
+  isactive: false
+  created_by: 1
+  updated_by: 1
+
+two:
+  truck_number: 1
+  inward_number: 1
+  inward_date: 2016-11-08 16:26:40
+  damage_bags_count: 1
+  return: false
+  total_quantity: 1
+  warehouse_id: 1
+  isactive: false
+  created_by: 1
+  updated_by: 1

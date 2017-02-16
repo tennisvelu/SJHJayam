@@ -1,0 +1,68 @@
+ <style>
+.table {
+    width: 60%!important;
+}
+
+td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 1px;
+    width:150px;
+    color:black;
+}
+h3{
+	color: green;
+	font-size: 16px;
+    font-weight: bold;
+}
+th{
+	background-color: #d81b60;
+	border: 1px solid #dddddd;
+	text-align: left;
+    padding: 8px;
+    color: white;
+    width:210px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.form-control{
+  width: 80%!important;
+}
+.btn {
+    height: 32px;
+    min-width: 88px;
+   
+}
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+</style>
+
+ <center><h3>Grade Name : <%=Grade.find(@grade_id).grade_type%></h3></center><br>
+<%=link_to '<i class="fa fa-hand-o-right" style="color:#d81b60;margin-left:71%;background-color:white;height:20px;width:30px;"></i>'.html_safe,companies_grade_path(:format=>@company_id),:title=>"Back"%><br>
+
+<center><table calss="table">
+<%=form_for @grade_packing ,:url=>{:controller=>"companies",:action=>"grade_packing_mapping",:grade_id=>@grade_id,:format=>@company_id} do |f|%>
+    
+
+       
+           <tr><td><%= f.label :packing_type,"Packing Type" %></td>
+            <td><%= f.collection_select(:packing_id, Packing.where(:company_id=>@company_id), :id, :packing_type,{include_blank:"--Packing--"},{:class => "form-control", required: true })%></td>
+          
+             <td><%=f.submit "Save",:style=>"margin-left:70px;"%></td></tr>
+
+<%end%></table></center><br>
+
+<center>
+<table calss="table">
+<thead><th>Packing Name</th>
+<th>Delete</th></thead>
+<%@grade.map do |i|%><tr>
+<td><%=Packing.find(i.packing_id).packing_type%></td>
+<td><%=link_to '',companies_grade_packing_delete_path(packing_id:i.packing_id,:grade_packing_id=>i.id,:format=>@company_id,:grade_id=>@grade_id), class:"fa fa-trash-o" ,:style=>"background-color:white;cursor:pointer;", data: { confirm: 'Are you sure?' }%></td></tr>
+<%end%></table></center>
+

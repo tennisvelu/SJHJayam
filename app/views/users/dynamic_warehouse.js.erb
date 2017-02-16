@@ -1,0 +1,5 @@
+<% if @warehouse %>
+<%war = Warehouse.new(:warehouse_name=>"Select Warehouse")%>
+<% @warehouse = [war,@warehouse].flatten %>
+   $('#fold1').html("<%= escape_javascript options_from_collection_for_select(@warehouse, :id, :warehouse_name )%>");
+<% end %>

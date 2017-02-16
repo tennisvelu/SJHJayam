@@ -1,0 +1,292 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<link href="/assets/style.css" rel="stylesheet">
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+  <div class="panel panel-default">
+ 
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+ 
+      <div class="tripeco-container">
+
+         <div class="tripeco-head2" style="border-bottom: 3px solid #0288d1;">User Form
+
+           <%= link_to '<i class="fa fa-hand-o-right" style="color:#d81b60"></i>'.html_safe, users_path,:class=>"icon-red-button",:title=>"Back",:style=>"float:right; color:green; background-color:white;" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        </div>
+        
+        <div class="tripeco-body">
+        
+          <div class="form-container">
+        
+            <div class="form-container">
+         
+              <div class="forms-outer">
+
+               <%= form_for(@user) do |f| %>
+
+                <% if @user.errors.any? %>
+
+              <div id="error_explanation">
+
+               <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+               <ul>
+
+                <% @user.errors.full_messages.each do |message| %>
+
+                 <li><%= message %></li>
+
+                <% end %>
+
+              </ul>
+
+             </div>
+      
+              <% end %>
+            <%unless params[:id].present?%>
+
+             <div class="form-col">
+ 
+             <div class="form-group">
+             <%= f.label :Company %>
+             <%= f.collection_select(:id, Company.all, :id, :company_name,{include_blank:"Select Company"},{:class => "form-control", required: true,:id=>"fold" })%>
+    
+             </div>
+
+             </div>
+             
+             
+
+             <div class="form-col">
+ 
+             <div class="form-group">
+    
+             <%= f.label :warehouse %>
+          
+            <%= select_tag 'user[warehouse_id]', options_from_collection_for_select(@warehouse, :id, :warehouse_name) ,{:id=>'fold1',include_blank:'Select Warehouse',:class => 'form-control', required: true}%>
+                
+             </div>
+
+             </div>
+
+              <%end%>
+
+             <div class="form-col">
+ 
+                <div class="form-group">
+    
+                <%= f.label :role %>
+
+                <%= f.collection_select(:role_id, Role.all, :id, :role_type,{include_blank:" Select Role"},{:class => "form-control", required: true })%>
+  
+                </div>
+
+                </div>
+
+
+              <div class="form-col">
+ 
+               <div class="form-group">
+    
+                <%= f.label :first_name %>
+
+                <%= f.text_field :first_name,:class=>"form-control" ,required:true %>
+  
+               </div>
+
+              </div>
+
+               <div class="form-col">
+ 
+                <div class="form-group">
+  
+                 <%= f.label :last_name %>
+
+                 <%= f.text_field :last_name,:class=>"form-control"  ,required:true%>
+ 
+                </div>
+
+              </div>
+
+               <div class="form-col">
+ 
+                <div class="form-group">
+    
+                  <%= f.label :user_name %>
+
+                  <%= f.text_field :user_name ,:class=>"form-control",required:true %>
+ 
+                </div>
+
+               </div>
+
+                <div class="form-col">
+ 
+                 <div class="form-group">
+    
+                  <%= f.label :password %>
+
+                  <%= f.text_field :password,:class=>"form-control" ,required:true %>
+ 
+                  </div>
+
+                  </div>
+
+                     
+  <%= f.fields_for :contact do |c| %>
+
+     <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= c.label :email %>
+
+      <%= c.text_field :email,:class=>"form-control",required:true  %>
+   
+  </div>
+
+  </div>
+
+     <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= c.label :telephone_number %>
+
+      <%= c.text_field :telephone_number,:class=>"form-control" ,required:true %>
+    
+  </div>
+
+  </div>
+
+    <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= c.label :mobile_number %>
+
+      <%= c.text_field :mobile_number ,:class=>"form-control",required:true %>
+    
+  </div>
+
+  </div>
+
+    <% end %>
+
+    <%= f.fields_for :address do |a| %>
+
+     <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= a.label :address %>
+
+      <%= a.text_field :address1,:class=>"form-control"  ,required:true%>
+   
+  </div>
+
+  </div>
+
+     <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= a.label :post_code %>
+
+      <%= a.text_field :post_code,:class=>"form-control" ,required:true %>
+   
+  </div>
+
+  </div>
+
+    <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= a.label :Country %>
+
+       <select name="country" class="countries form-control" id="countryId"><option value="">Select Country</option></select>
+  
+  </div>
+
+  </div>
+
+    <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= a.label :state %>
+     <select name="state" class="states form-control" id="stateId"><option value="">Select State</option></select>
+   
+  </div>
+
+  </div>
+
+     <div class="form-col">
+ 
+      <div class="form-group">
+    
+      <%= a.label :City %>
+
+     <select name="city" class="cities form-control" id="cityId"><option value="">Select City</option></select>
+    
+  </div>
+
+  </div>
+
+  <% end %>
+
+<div class="card-footer">
+
+                    <div class="save">
+
+                    <button type="submit" class="btn btn-info" title="Submit" style="float:right;background-color:white;color:green;margin-top: 3%;"><i class="fa fa-floppy-o" style="color:#d81b60"></i></button>
+
+                    <% end %>
+
+                  </div>
+
+                </div>
+
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+             <link href= "/assets/javascripts/location.js" >
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function () { 
+             $("#fold").change(function () {
+              var id=($(this).val());
+              
+               $.ajax({
+
+              type: "GET",
+
+              url: "/users/dynamic_warehouse."+id
+
+            })
+
+                    });
+              });
+          
+        </script> 

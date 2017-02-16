@@ -1,0 +1,94 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+.table {
+    width: 60%!important;
+}
+
+td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 1px;
+}
+h3{
+	color: green;
+	font-size: 16px;
+}
+th{
+	background-color: #d81b60;
+	border: 1px solid #dddddd;
+	text-align: left;
+    padding: 8px;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.form-control{
+  width: 65%!important;
+}
+.btn {
+    height: 32px;
+    min-width: 88px;
+   
+}
+</style>
+<center>
+<table class="table">
+<thead class="tab-header blue" style="background-color: #0288d1;">
+            
+  <h4><%=Company.find(params[:format]).company_name%>&nbsp;Packing Details</h4><%= link_to '<i class="fa fa-hand-o-right " style="color:#d81b60"></i>'.html_safe,companies_path,:class=>"icon-button-red",:title=>"Back", :style=>"text-align:right; background-color:white; color:green;float:right;margin-right: 293px;margin-top:10px;"%>
+<tr>
+<th>Packing Name</th>
+<th>Edit</th>
+<th>Delete</th>
+</tr>
+</thead>
+<%u=1%>
+<%unless @company_packing.empty?%>
+
+<%@company_packing.map do |j|%>
+<tr>
+<td><%=j.packing_type%></td>
+<td><a float="right" type="button"  data-toggle="modal" data-target="#myModalss<%=u%>" style="background-color:white;cursor:pointer;"><i class="fa fa-edit"></i></a></td>
+<div class="container">
+  <div class="modal fade" id="myModalss<%=u%>" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Packing Edit</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+           <%=form_for @packing,:url=>{:controller=>"companies",:action=>"packing_update",:format=>params[:format],:id=>j.id} do |k|%>
+            Packing Name<%=text_field_tag :packing,j.packing_type%>
+          </p>
+        </div>
+       <div class="modal-footer"><%u=u+1%>
+        <%=  k.submit "Submit",class:"btn btn-success" %><%end%>
+       <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+       </div>
+      </div>
+    </div>
+    </body>
+
+<td><%=link_to '',companies_packing_delete_path(:id=>j.id,:format=>params[:format]), class:"fa fa-trash-o" ,:style=>"background-color:white;cursor:pointer;", data: { confirm: 'Are you sure?' }%></td>
+<%end%></tr>
+<%else%> 
+<tr><td>SORRY NO DATA</td></tr>
+
+<%end%></table>
+
+</center>
+
+

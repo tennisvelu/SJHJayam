@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  truck_number: 1
+  outward_number: 1
+  outward_date: 2016-11-08 17:24:33
+  location_id: 1
+  dispatch_type: 1
+  total_quantity: 1
+  payment_type: 1
+  warehouse_id: 1
+  isactive: false
+  created_by: 1
+  updated_by: 1
+
+two:
+  truck_number: 1
+  outward_number: 1
+  outward_date: 2016-11-08 17:24:33
+  location_id: 1
+  dispatch_type: 1
+  total_quantity: 1
+  payment_type: 1
+  warehouse_id: 1
+  isactive: false
+  created_by: 1
+  updated_by: 1

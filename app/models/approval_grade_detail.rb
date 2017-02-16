@@ -1,0 +1,2 @@
+class ApprovalGradeDetail < ApplicationRecord
+end

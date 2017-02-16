@@ -1,0 +1,223 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+.table {width: 80%!important;}
+td {border: 1px solid #dddddd;text-align: left;padding: 1px; text-align:left;}
+h3{color: block;font-size: 16px;}
+th{	background-color: #d81b60;	border: 1px solid #dddddd;	text-align: left; padding: 8px;color: white; text-align:center;}
+tr:nth-child(even) {background-color: #dddddd;}
+.form-control{width: 65%!important;}
+.btn {height: 32px; min-width: 88px; }
+body {font-family: "Lato", sans-serif;}
+ul.tab {list-style-type: none; margin: 0; padding: 0; overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1;}
+ul.tab li {float: left;}
+ul.tab li a {display: inline-block;color: black;text-align: center;padding: 14px 16px;text-decoration: none;transition: 0.3s; font-size: 17px;}
+ul.tab li a:hover {background-color: #ddd;}
+ul.tab li a:focus, .active {background-color: #ccc;}
+.tabcontent {display: none;padding: 6px 12px;border: 1px solid #ccc; border-top: none;}
+</style>
+
+<body style="background-color:white;">
+<center><table class="table">
+<h4><b>TODAY (<%=Date.today.to_date.strftime("%d-%b-%y")%>) Stock</b>&nbsp;(Tons/Bags)</h4>
+<thead><tr>
+<th style="text-align:left;">COMPANY</th>    
+<th style="text-align:left;">WAREHOUSE</th>
+<th colspan="2" >BY BOOK</th>
+<th colspan="2" >PHYSICAL</th>
+<th colspan="2" >DAMAGED</th>
+</tr></thead></tbody>
+<%@warehouse_stock.map do |i|%>
+<tr><td style="text-align:left;"><%=Company.find(i[0]).company_name%></td>
+<td style="text-align:left;"><%=i[1]%></td>
+<td><%=number_with_precision(i[2]/20.to_f, precision: 3)%></td><td><%=i[2]%></td>
+<td><%=number_with_precision(i[3]/20.to_f, precision: 3)%></td><td><%=i[3]%></td>
+<td><%=number_with_precision(i[4]/20.to_f, precision: 3)%></td><td><%=i[4]%></td>
+<%end%></tr></tbody></table>
+</center>
+<br><br>
+
+<center><table class="table">
+<h4><b>INWARD CONSOLIDATE</b>&nbsp;(Tons/Bags)</h4>
+<%=form_for Damage.new ,:url=>{:controller=>"companies",:action=>"inward_consolidate"} do |o|%>
+<tr><%unless params[:to4].present?%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom4" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required ></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo4" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required ></td>
+<%else%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom4" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo4" placeholder=<%=(Date.parse(params[:to4])-1).strftime("%d-%m-%Y")%> required></td>
+<%end%>
+<td><%= o.submit "Get Report", class:"btn btn-success"%></td></tr>
+<%end%>
+
+<center><table class="table">
+<thead><tr>
+<th style="text-align:left;">COMPANY</th>    
+<th style="text-align:left;">WAREHOUSE</th>
+<th colspan="2">BY RAOD</th>
+<th colspan="2">BY RAIL</th>
+<th colspan="2">RETURN</th>
+</tr></thead>
+<%if @inward.empty?%><br>
+<tr><td>Sorry No Data</td></tr>
+<%else%>
+<%@inward.map do |i|%>
+<tr><td style="text-align:left;"><%=Company.find(i[0]).company_name%></td>
+<td style="text-align:left;"><%=i[1]%></td>
+<td><%=number_with_precision(i[2]/20.to_f, precision: 3)%></td><td><%=i[2]%></td>
+<td><%=number_with_precision(i[3]/20.to_f, precision: 3)%></td><td><%=i[3]%></td>
+<td><%=number_with_precision(i[4]/20.to_f, precision: 3)%></td><td><%=i[4]%></td>
+<%end%></tr><%end%>
+</table></center><br><br>
+
+<center><table class="table">
+<h4><b>OUTWARD CONSOLIDATE</b>&nbsp;(Tons/Bags)</h4>
+<%=form_for Damage.new ,:url=>{:controller=>"companies",:action=>"direct_sale"} do |o|%>
+<tr><%unless params[:to3].present?%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom3" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo3" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+<%else%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom3" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo3" placeholder=<%=(Date.parse(params[:to3])-1).strftime("%d-%m-%Y")%> required></td>
+<%end%>
+<td><%= o.submit "Get Report", class:"btn btn-success"%></td></tr>
+<%end%>
+</table>
+
+<center><table class="table">
+<thead><tr>
+<th style="text-align:left;">COMPANY</th>
+<th style="text-align:left;">WAREHOUSE</th>
+<th colspan="2">RAIL HEAD</th>
+<th colspan="2">DIRECT SALE</th>
+<th colspan="2">TRANSHIPMENT</th>
+<th colspan="2">GODOWN</th>
+<th colspan="2">DAMAGED</th>
+<th colspan="2">TOTAL</th>
+</tr></thead>
+<%if @direct_sale.empty?%><br>
+<tr><td>Sorry No Data</td></tr>
+<%else%>
+<%@direct_sale.map do |i|%>
+<tr><td style="text-align:left;"><%=Company.find(i[0]).company_name%></td>
+<td style="text-align:left;"><%=i[1]%></td>
+<td><%=number_with_precision(i[2]/20.to_f, precision: 3)%></td><td><%=i[2]%></td>
+<td><%=number_with_precision(i[3]/20.to_f, precision: 3)%></td><td><%=i[3]%></td>
+<td><%=number_with_precision(i[4]/20.to_f, precision: 3)%></td><td><%=i[4]%></td>
+<td><%=number_with_precision(i[5]/20.to_f, precision: 3)%></td><td><%=i[5]%></td>
+<td><%=number_with_precision(i[6]/20.to_f, precision: 3)%></td><td><%=i[6]%></td>
+<td><%=number_with_precision(i[7]/20.to_f, precision: 3)%></td><td><%=i[7]%></td>
+<%end%></tr><%end%>
+</table></center><br><br>
+
+<center><table class="table">
+<h4><b>DAMAGED</b>(Tons/Bags)</h4>
+<%=form_for Damage.new ,:url=>{:controller=>"companies",:action=>"damage_date"} do |o|%>
+<tr><%unless params[:to].present?%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+<%else%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo" placeholder=<%=(Date.parse(params[:to])-1).strftime("%d-%m-%Y")%> required></td>
+<%end%>
+<td><%= o.submit "Get Report", class:"btn btn-success"%></td></tr>
+<%end%>
+</table>
+
+<table class="table">
+<thead><tr>
+<th style="text-align:left;">COMPANY</th>
+<th style="text-align:left;">WAREHOUSE</th>
+<th colspan="2">INWARD</th>
+<th colspan="2">GODOWN</th>
+<th colspan="2">RETURN</th>
+<th colspan="2">TOTAL</th>
+</tr></thead>
+<%if @damage.empty?%><br>
+<tr><td>Sorry No Data</td></tr>
+<%else%>
+<tbody>
+<%@damage.map do |k|%>
+<tr><td style="text-align:left;"><%=Company.find(k[0]).company_name%></td>  
+<td style="text-align:left;"><%=k[1]%></td>
+<td><%=number_with_precision(k[2]/20.to_f, precision: 3)%></td><td><%=k[2]%></td>
+<td><%=number_with_precision(k[3]/20.to_f, precision: 3)%></td><td><%=k[3]%></td>
+<td><%=number_with_precision(k[4]/20.to_f, precision: 3)%></td><td><%=k[4]%></td>
+<%t=k[2]+k[3]+k[4]%>
+<td><%=t/20.to_f.to_f%></td><td><%=t%></td>
+<%end%></tr><%end%>
+</tbody></table></center><br>
+</html>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js" type="text/javascript"></script>
+   
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
+    
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/start/jquery-ui.css" rel="Stylesheet" type="text/css" />
+    
+   <script type="text/javascript">
+        $(function(){
+        $("#txtTo").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0'  });
+        $("#txtFrom").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+    <script type="text/javascript">
+        $(function(){
+        $("#txtTo1").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0'  });
+        $("#txtFrom1").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo1").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+    <script type="text/javascript">
+        $(function(){
+        $("#txtTo2").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0'  });
+        $("#txtFrom2").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0' }).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo2").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+    <script type="text/javascript">
+        $(function(){
+        $("#txtTo3").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom3").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo3").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+     <script type="text/javascript">
+        $(function(){
+        $("#txtTo4").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom4").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo4").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>

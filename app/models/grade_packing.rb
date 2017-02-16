@@ -1,0 +1,2 @@
+class GradePacking < ApplicationRecord
+end

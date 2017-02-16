@@ -1,0 +1,194 @@
+<style>
+td {border: 1px solid #dddddd;text-align: left;padding: 1px;}
+th{ background-color: #d81b60;  border: 1px solid #dddddd;  text-align: left; padding: 8px;color: white; text-align:center;}
+h3{color: white;font-size: 16px;}
+th{background-color: #d81b60;border: 1px solid #dddddd;text-align: left;padding: 8px;color: white;}
+tr:nth-child(even) {background-color: #dddddd;}
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+.col-md-3{margin-top: 10px;}
+.col-md-2{margin-top: 15px;}
+.form-control1{width: 65%!important;height:50%;}
+.h4{color:block;}
+</style>
+
+<head>
+  <title>Jayam</title>
+  <link href="/assets/jeyam.png" rel="shortcut icon" type="image/x-icon"/>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+<body>
+<% if not session[:user_id].blank? %>
+<%=link_to "Logout",users_logout_path, style:"float:right;background-color:#c2185b;color:white;margin-top:10px;",class:"btn btn-blue"%>
+
+
+<%if User.find(session[:user_id]).role.role_type=="Super Admin"%>
+
+<div class="tab" style="background: #c2185b;height:60px">
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <%@warehousevscompany = Warehouse.all%>
+      <%@warehousevscompany.collect{|p| p.warehouse_name = p.warehouse_name+"("+p.company.company_name+")"}%>
+     <%= form_for Warehouse.new,:url=>{:controller=>"companies",:action=>"id_pass_warehouse",:validate=>true} do |f| %>
+       <%= f.collection_select :id,@warehousevscompany,  :id, :warehouse_name,{include_blank:"Select Warehouse"},:class=>"form-control1", :onchange => "this.form.submit()"%>
+       <%end%>
+    </div>
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-2">
+      
+      <%=link_to '',companies_super_admin_path,:title=>"Dashboard", class:"fa fa-tachometer" ,:style=>"background-color:#c2185b;cursor:pointer;padding: 3px 4px;color:white;"%>   
+
+      <%=link_to '',companies_path,:title=>"Company", class:"fa fa-building-o" ,:style=>"background-color:#c2185b;cursor:pointer;padding: 3px 4px;color:white;"%>   
+      <%=link_to "",warehouses_path,:title=>"Warehouse" , class:"fa fa-institution" ,:style=>"background-color:#c2185b;cursor:pointer;padding: 3px 4px;color:white;"%>
+      <%=link_to "",users_path,:title=>"User" , class:"fa fa-users" ,:style=>"background-color:#c2185b;cursor:pointer;padding: 3px 4px;color:white;"%>
+      
+      <a data-toggle="modal" data-target="#myModal",title="Company details" style="background-color:#c2185b;cursor:pointer;padding: 3px 4px;color:white;"><i class="fa fa-telegram" title="Advanvce & Suspense Request" ></i><%@suspense_advance=OutwardApproval.where(:status=>0)%><%=@suspense_advance.count%></a>
+    
+      <a data-toggle="modal" data-target="#myModal1" style="background-color:#c2185b;cursor:pointer;padding: 3px 4px;color:white;"><i class="fa fa-location-arrow" style="font-size:20px;" title="Location Request"></i><%@location=Location.where(:status=>0)%><%=@location.count%></a>
+
+    </div>
+</div></div></div><%end%>
+<%end%>
+<body>
+<div class="container">
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><b>Approval for Suspense and Advance billing</b></h4>
+        </div>
+        <div class="modal-body table-container">
+<table class="table-container">
+<thead>
+<tr>
+<th style="height: 33px;">Company</th>
+<th >Warehouse</th>
+<th>Party Name</th>
+<th>Grade</th>
+<th>Packing</th>
+<th colspan="2">Quantity</th>
+<th colspan="2">Total Quantity</th>
+<th>Location</th>
+<th>Billing</th>
+<th >Status </th>
+</tr>
+</thead>
+<tbody>
+<%= form_for :@outward, :url => {:controller => "companies", :action =>"suspense_advance_approve" } do |exp| %> 
+<%@suspense_advance=OutwardApproval.where(:status=>0)%>
+<%@suspense_advance.map do |j|%>
+<tr>
+<td><%=Warehouse.find(j.warehouse_id).company.company_name%></td>
+<td><%=Warehouse.find(j.warehouse_id).warehouse_name%></td>
+<td><%=j.party_name%></td>
+<td><%id_grade=ApprovalGradeDetail.where(outward_approval_id: j.id)%>
+<%id_grade.map do |i|%><%=Grade.find(i.grade_id).grade_type%><br><%end%></td>
+
+<td><%id_pack=ApprovalGradeDetail.where(outward_approval_id: j.id)%>
+<%id_pack.map do |i|%><%=Packing.find(i.packing_id).packing_type%><br><%end%></td>
+
+<%id_quantity=ApprovalGradeDetail.where(outward_approval_id: j.id)%>
+<td><%id_quantity.map do |i|%><%=number_with_precision(i.quantity/20.to_f, precision: 3)%><br><%end%></td>
+<td><%id_quantity.map do |i|%><%=i.quantity%><br><%end%></td>
+
+<td><%=number_with_precision(j.total_quantity.to_i/20.to_f, precision: 3)%></td>
+<td><%=j.total_quantity%></td>
+
+<td><%=Location.find(j.dispatch_place).location_name%></td>
+<td><%= j.billing_type=="1" ? "Advance" : "Suspense" %></td>
+<td style="text-align: center"><%= check_box_tag "outward_ids[]", j.id%></td>
+</tr>
+<%end%>
+<tr><td>
+
+</tbody>
+</table>
+
+        </div>
+      <br><center><%= exp.button "Approve", action: "approve", :name => "commit", :value => "approve", :class=>"btn btn-success" %></td>
+      <td><%= exp.button "Reject", action: "reject", :name => "commit", :value => "reject", :class=>"btn btn-danger" %></td></tr></center>
+      <%end%>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+
+</body>
+
+
+<div class="container">
+  <div class="modal fade" id="myModal1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><b>Approval for Location</b></h4>
+        </div>
+        <div class="modal-body">
+       <center>
+        <table class="table-container">
+<thead>
+<tr>
+<th style="height: 33px;">Company</th>
+<th>Warehouse</th>
+<th>Location</th>
+<th colspan="2">Status</th>
+</tr>
+</thead>
+
+<tbody>
+<%= form_for :@outward, :url => {:controller => "companies", :action =>"location_approve" } do |loc| %> 
+<%@location=Location.where(:status=>0)%>
+<%@location.map do |i|%>
+<tr>
+<td><%=Warehouse.find(i.warehouse_id).company.company_name%></td>
+<td><%=Warehouse.find(i.warehouse_id).warehouse_name%></td>
+<td><%=i.location_name%></td>
+<td style="text-align: center"><%= check_box_tag "location_ids[]", i.id%></td></tr>
+<%end%>
+<tr></tr></tbody></table><br><br><center>
+<%= loc.button "Approve", action: "approve", :name => "commit", :value => "approve", :class=>"btn btn-success btn-sm" %>
+
+<%= loc.button "Reject", action: "reject", :name => "commit", :value => "reject", :class=>"btn btn-danger" %>
+</center>
+<%end%>
+</center>
+            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+</div>
+</body>
+</html>
+
+
+<%= yield %>
+
+</body>
+</html>

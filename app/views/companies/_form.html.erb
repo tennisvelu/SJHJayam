@@ -1,0 +1,198 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<link href="/assets/style.css" rel="stylesheet">
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+  <div class="panel panel-default">
+ 
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+ 
+      <div class="tripeco-container">
+      
+        <div class="tripeco-head2" style="border-bottom: 3px solid #0288d1;">Company Form
+
+          <%= link_to '<i class="fa fa-hand-o-right" style="color:#d81b60"></i>'.html_safe, companies_path,:class=>"icon-red-button",:title=>"Back",:style=>"float:right; color:green; background-color:white;" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+          </div>
+        
+        <div class="tripeco-body">
+        
+          <div class="form-container">
+        
+            <div class="form-container">
+         
+              <div class="forms-outer">
+
+                <%= form_for(@company) do |f| %>
+  
+                  <% if @company.errors.any? %>
+    
+                    <div id="error_explanation">
+      
+                      <h2><%= pluralize(@company.errors.count, "error") %> prohibited this company from being saved:</h2>
+
+                      <ul>
+      
+                        <% @company.errors.full_messages.each do |message| %>
+        
+                          <li><%= message %></li>
+      
+                        <% end %>
+      
+                      </ul>
+    
+                    </div>
+  
+                  <% end %>
+
+                  <div class="form-col">
+ 
+                    <div class="form-group">
+    
+                      <%= f.label :company_name %>
+    
+                      <%= f.text_field :company_name,:class=>"form-control" ,required:true%>
+         
+                    </div>
+
+                  </div>  
+
+                  <%= f.fields_for :contact do |c| %>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+     
+                        <%= c.label :email %>
+      
+                        <%= c.text_field :email,:class=>"form-control",required:true %>
+     
+                      </div>
+
+                    </div>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+      
+                        <%= c.label :telephone_number %>
+      
+                        <%= c.text_field :telephone_number,:class=>"form-control",required:true %>
+    
+                      </div>
+
+                    </div>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+      
+                        <%= c.label :mobile_number %>
+      
+                        <%= c.text_field :mobile_number,:class=>"form-control" ,required:true%>
+    
+                      </div>
+
+                    </div>
+
+                  <% end %>
+
+                  <%= f.fields_for :address do |a| %>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+      
+                        <%= a.label :address %>
+      
+                        <%= a.text_field :address1,:class=>"form-control" ,required:true%>
+    
+                      </div>
+
+                    </div>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+      
+                        <%= a.label :post_code %>
+      
+                        <%= a.text_field :post_code,:class=>"form-control" ,required:true%>
+                        
+                      </div>
+
+                    </div>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+      
+                        <%= a.label :Country %>
+     
+                        <select name="country" class="countries form-control" id="countryId"><option value="">Select Country</option></select>
+    
+                      </div>
+
+                    </div>
+
+                    <div class="form-col">
+   
+                      <div class="form-group">
+      
+                        <%= a.label :state %>
+     
+                        <select name="state" class="states form-control" id="stateId"><option value="">Select State</option></select>
+    
+                      </div>
+
+                    </div>
+
+                    <div class="form-col">
+ 
+                      <div class="form-group">
+      
+                        <%= a.label :City %>
+     
+                        <select name="city" class="cities form-control" id="cityId"><option value="">Select City</option></select>
+    
+                      </div>
+
+                    </div>
+
+                  <% end %>
+
+                <!--div class="form-group"-->
+
+                  <div class="card-footer">
+
+                    <div class="save">
+
+                    <button type="submit" class="btn btn-info" title="Submit" style="float:right;background-color:white;color:green;margin-top: 3%;"><i class="fa fa-floppy-o" style="color:#d81b60"></i></button>
+
+                    <% end %>
+
+                  </div>
+
+                </div>
+
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<link href= "/assets/javascripts/location.js" >
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

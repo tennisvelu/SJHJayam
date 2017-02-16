@@ -1,0 +1,2 @@
+class LoadingType < ApplicationRecord
+end

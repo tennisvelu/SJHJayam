@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  grade_type: MyString
+  warehouse_id: 1
+
+two:
+  grade_type: MyString
+  warehouse_id: 1

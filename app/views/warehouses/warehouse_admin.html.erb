@@ -1,0 +1,729 @@
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.11/angular.js" type="text/javascript"></script>
+ <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+.table {width: 70%!important;}
+
+td { border: 1px solid #dddddd;text-align: left;padding: 1px; text-align:left;}
+h4{color: block;font-size: 16px;}
+th{ background-color: #d81b60;  border: 1px solid #dddddd;  text-align: left; padding: 8px;color: white; text-align:center;}
+body {font-family: "Lato", sans-serif;}
+ul.tab {list-style-type: none;margin: 0;padding: 0;overflow: hidden;border: 1px solid #ccc;background-color: #f1f1f1;height:40px;}
+ul.tab li {float: left;}
+ul.tab li a {display: inline-block;color: white;text-align: center; padding: 14px 16px;text-decoration: none;transition: 0.3s;font-size: 17px;}
+ul.tab li a:hover {background-color: #ddd;color:black;}
+ul.tab li a:focus, .active {background-color: #620c3a;font-weight: bold;color:white;}
+.tabcontent {display: none;padding: 6px 12px;border: 1px solid #ccc;border-top: none;}
+.form-control{width: 65%!important;}
+</style>
+
+<body style="background-color:white;">
+<center><h4><b><%=Warehouse.find(@warehouse_session_id).warehouse_name%> &nbsp;&nbsp;WAREHOUSE</b>(<%=Company.find(Warehouse.find(@warehouse_session_id).company_id).company_name%>)</h4></center>
+<ul class="tab" style="background: #d81b60;">
+  <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'London')" <%unless params[:to].present?||params[:to1].present?||params[:to2]||params[:to5]||params[:to6].present?%>id="defaultOpen"<%end%>>DASHBOARD</a></li>
+  <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Paris')"<%if params[:to].present?%>id="defaultOpen"<%end%>>INWARD</a></li>
+  <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Tokyo')"<%if params[:to1].present?%>id="defaultOpen"<%end%>>OUTWARD</a></li>
+  <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Tamil')"<%if params[:to2].present?%>id="defaultOpen"<%end%>>DAMAGED</a></li>
+  <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'English')"<%if params[:to5].present?%>id="defaultOpen"<%end%>>REPORT</a></li>
+  <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Telugu')"<%if params[:to6].present?%>id="defaultOpen"<%end%>>DOCUMENTS</a></li>
+
+</ul>
+<div id="London" class="tabcontent">
+  
+<center>
+
+  <table class="table">
+
+ <tr>
+  <td><b>STOCK (Tons/Bags)</b></td>
+      <td><b>TODAY (<%=Date.today.to_date.strftime("%d-%b-%y")%>)</b></td>
+      <td><b>DAMAGED&nbsp;:&nbsp;<%unless Damage.where(:warehouse_id=>@warehouse_session_id).empty?%><%damag=Damage.where(:warehouse_id=>@warehouse_session_id).last.total_quantity%><%=damag/20.to_f.to_f%>/<%=damag%><%else%>0<%end%></b></td></tr><table>
+
+<table class="table">
+<thead><tr>
+<th style="text-align:left;">GRADE</th>
+<th style="text-align:left;">PACKING</th>
+<th colspan="2">BY BOOK</th>
+<th colspan="2">PHYSICAL</th></tr>
+</thead>
+<%@warehouse_stock.map do |i|%>
+<!--%Stock.where(:grade_id=>0).delete_all%-->
+<tr><td style="text-align:left;"><%=Grade.find(i[0]).grade_type%></td>
+<%unless i[1]==nil%>
+<td style="text-align:left;"><%=Packing.find(i[1]).packing_type%></td><%end%>
+<td><%=number_with_precision(i[2]/20.to_f, precision: 3)%></td><td><%=i[2]%></td>
+<td><%=number_with_precision(i[3]/20.to_f, precision: 3)%></td><td><%=i[3]%></td></tr>
+<%end%>
+</table><br><br>
+
+<h4><b>INWARD CONSOLIDATE</b>(Tons/Bags)</h4>
+<table class="table">
+<%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"inward_consolidate",:id=>@warehouse_session_id,:validate=>true} do |o|%>
+<tr>
+<%unless params[:to4].present?%>
+
+<td><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom4" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo4" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+
+<%else%>
+
+<td><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom4" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y") %> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo4" placeholder=<%=(Date.parse(params[:to4])-1).strftime("%d-%m-%Y")%> required></td>
+
+<%end%> 
+
+ <td><%= o.submit "Get Report", class:"btn btn-success"%></td>
+
+</tr><%end%></table>
+
+<table class="table">
+
+<thead>
+<tr>
+<thead>
+<th>DATE</th>    
+<th colspan="2">BY ROAD</th>
+<th colspan="2">BY RAIL</th>
+<th colspan="2">RETURN</th>
+<th colspan="2">DAMAGED</th>
+<th colspan="2">TOTAL</th>
+</thead></tr>
+<%if @inward_consolidate.empty?%><br>
+<tr>Sorry. No Data Found!!</tr>
+<%else%>
+<%w=@inward_consolidate%><tr>
+<td><%=Date.today%></td>
+<td><%=number_with_precision(w[0]/20.to_f, precision: 3)%></td><td><%=w[0]%></td>
+<td><%=number_with_precision(w[1]/20.to_f, precision: 3)%></td><td><%=w[1]%></td>
+<td><%=number_with_precision(w[2]/20.to_f, precision: 3)%></td><td><%=w[2]%></td>
+<td><%=number_with_precision(w[3]/20.to_f, precision: 3)%></td><td><%=w[3]%></td>
+<%ww_total=w[0]+w[1]+w[3]%>
+<td><%=number_with_precision(ww_total/20.to_f, precision: 3)%></td><td><%=ww_total%></td>
+</tr>
+<%end%>
+</table><br><br>
+
+
+
+
+<h4><b>OUTWARD CONSOLIDATE</b>(Tons/Bags)</h4>
+<table class="table">
+<%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"direct_sale",:id=>@warehouse_session_id} do |o|%>
+<tr>
+<%unless params[:to3].present?%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom3" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo3" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+
+<%else%>
+
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom3" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo3" placeholder=<%=(Date.parse(params[:to3])-1).strftime("%d-%m-%Y")%> required></td>
+
+<%end%>
+
+<td><%= o.submit "Get Report", class:"btn btn-success"%></td>
+
+<%end%></table>
+
+ <table class="table">
+   <thead>
+   <th>DATE</th>    
+   <th colspan="2">RAIL HEAD</th>
+   <th colspan="2">DIRECT SALE</th> 
+   <th colspan="2">TRANSHIPMENT</th>
+   <th colspan="2">GODOWN</th>
+   <th colspan="2">DAMAGED</th>
+   <th colspan="2">TOTAL</th>
+   </thead>
+
+<%if @direct_sale.empty?%><br>
+<tr>Sorry. No Data Found!!</tr>
+<%else%>
+<%w=@direct_sale%><tr>
+<td><%=Date.yesterday%></td>
+<td><%=number_with_precision(w[0]/20.to_f, precision: 3)%></td><td><%=w[0]%></td>
+<td><%=number_with_precision(w[1]/20.to_f, precision: 3)%></td><td><%=w[1]%></td>
+<td><%=number_with_precision(w[2]/20.to_f, precision: 3)%></td><td><%=w[2]%></td>
+<td><%=number_with_precision(w[3]/20.to_f, precision: 3)%></td><td><%=w[3]%></td>
+<td><%=number_with_precision(w[4]/20.to_f, precision: 3)%></td><td><%=w[4]%></td>
+<td><%=number_with_precision(w[5]/20.to_f, precision: 3)%></td><td><%=w[5]%></td>
+<%end%></tr>
+</table>
+</div>
+
+
+
+
+<div id="Paris" class="tabcontent">
+<center>
+<h4><b>INWARD</b>(Tons/Bags)</h4>
+<table class="table">
+<%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"inward_date",:id=>@warehouse_session_id} do |o|%>
+<tr>
+<%unless params[:to].present?%>
+
+<td><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+
+<td><%= select_tag 'type', options_for_select(['ByRoad','ByRail']),{include_blank:"Select Type",:class=>"form-control"}%></td>
+
+ <%else%>
+
+<td><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo" placeholder=<%=(Date.parse(params[:to])-1).strftime("%d-%m-%Y")%> required></td>
+
+<td><%= select_tag 'type', options_for_select(['ByRoad','ByRail']),{include_blank:"#{params[:type]}",:class=>"form-control"}%></td>
+<%end%>
+<td><%= o.submit "Get Report", class:"btn btn-success"%></td>
+<%end%></tr>
+</table>
+
+<table class="table">
+<thead>
+<th>INVOICE NUMBER</th>
+<th>INVOICE DATE</th>
+<th>MANUFACTURE WEEK</th>
+<th>GRANING</th>
+<th>PACKING</th>
+<th colspan="2">QUANTITY</th>
+<th colspan="2">TOTAL QUANTITY</th>
+<th>Image</th>
+</thead>
+<%if @inward.empty?%>
+<tr><td>Sorry. No Data Found!!</td></tr>
+<%else%>
+<!--%=will_paginate @inward %-->
+<%u=1%>
+<%@inward.map do |k|%>
+<tr>
+  <td><%=k.invoice_number%></td>
+  <td><%=k.invoice_date.strftime("%d-%m-%Y")%></td>
+  <td><%week_no=InwardManufactureDetail.where(:inward=>k.id).pluck(:week_number)%>
+  <%week_no.map do |i|%><%=i%><br><%end%></td>
+
+  <td><%grade=InwardManufactureDetail.where(:inward=>k.id).pluck(:grading)%>
+  <%grade.map do |i|%><%=Grade.find(i).grade_type%><br><%end%></td>
+
+ <td><%packing=InwardManufactureDetail.where(:inward=>k.id).pluck(:packing)%>
+  <%packing.map do |i|%><%=Packing.find(i).packing_type%><br><%end%></td>
+
+  <%quantity=InwardManufactureDetail.where(:inward=>k.id).pluck(:quantity)%>
+
+  <td><%quantity.map do |i|%><%=number_with_precision(i/20.to_f, precision: 3)%><br><%end%></td>
+
+  <td><%quantity.map do |i|%><%=i%><br><%end%></td>
+
+  <td><%=number_with_precision(k.total_quantity/20.to_f, precision: 3)%></td><td><%=k.total_quantity%></td>
+
+<%if Image.where(:id=>k.image_id).present?%>
+ <td><a data-toggle="modal" data-target="#myModals<%=u%>" style="background-color:white;cursor:pointer;padding: 3px 4px;color:#c2185b;"><i class="fa fa-eye" title="View Image" ></i></a></td>
+
+<div class="container">
+  <div class="modal fade" id="myModals<%=u%>" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><b>Truck Image</b></h4>
+        </div>
+        <div class="modal-body">
+          
+          <center>
+
+           <%img=Image.find(k.image_id).image_path%>
+           <%=image_tag img ,:style=>"width:500px;height:50%;"%>
+       
+          </center>
+       
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+</div>
+<%u=u+1%>
+<%else%><td><i class="fa fa-eye-slash" title="No Image" style="background-color:white;cursor:pointer;padding: 3px 4px;color:#c2185b;"></td><%end%>
+<%end%></tr><%end%></table></center></div>
+
+
+<div id="Tokyo" class="tabcontent">
+<center>
+<h4><b>OUTWARD</b>(Tons/Bags)</h4>
+<table class="table">
+<%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"outward_date",:id=>@warehouse_session_id} do |o|%>
+<tr>
+<%if params[:to1].present?%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom1" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo1" placeholder=<%=(Date.parse(params[:to1])-1).strftime("%d-%m-%Y")%> required></td>
+<%else%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom1" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo1" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+<%end%>
+<td><%= o.submit "Get Report", class:"btn btn-success"%></td>
+<%end%></tr></table>
+
+<table class="table">
+<thead>
+<th>INVOICE NUMBER</th>
+<th>INVOICE DATE</th>
+<th>MANUFACTURE WEEK</th>
+<th>GRANING</th>
+<th>PACKING</th>
+<th colspan="2">QUANTITY</th>
+<th colspan="2">TOTAL QUANTITY</th>
+<th>IMAGE</th>
+</thead>
+
+<%if @outward.empty?%><br>
+<tr><td>Sorry. No Data Found!!</td></tr>
+<%else%>
+<!--%=will_paginate @outward %-->
+<%t=22%>
+<%@outward.map do |l|%>
+<tr><td><%=l.invoice_number%></td>
+<td><%=l.invoice_date.strftime("%d-%m-%Y")%></td>
+<td><%week=OutwardManufactureDetail.where(:outward_id=>l.id).pluck(:week_number)%><%week.map do |i|%><%=i%><br><%end%></td>
+<td><%grade=OutwardManufactureDetail.where(:outward_id=>l.id).pluck(:grading)%>
+<%grade.map do |i|%><%=Grade.find(i).grade_type%><br><%end%></td>
+<td><%packing=OutwardManufactureDetail.where(:outward_id=>l.id).pluck(:packing)%>
+<%packing.map do |i|%><%=Packing.find(i).packing_type%><br><%end%></td>
+
+<%quantity=OutwardManufactureDetail.where(:outward_id=>l.id).pluck(:quantity)%>
+
+<td><%quantity.map do |i|%><%=number_with_precision(i/20.to_f, precision: 3)%><br><%end%></td>
+<td><%quantity.map do |i|%><%=i%><br><%end%></td>
+
+<td><%=number_with_precision(l.total_quantity/20.to_f, precision: 3)%></td><td><%=l.total_quantity%></td>
+
+<%if Image.where(:id=>l.image_id).present?%>
+
+ <td><a data-toggle="modal" data-target="#myModalss<%=t%>" style="background-color:white;cursor:pointer;padding: 3px 4px;color:#c2185b;"><i class="fa fa-eye" title="View Image" ></i></a></td>
+
+<div class="container">
+  <div class="modal fade" id="myModalss<%=t%>" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><b>Truck Image</b></h4>
+        </div>
+        <div class="modal-body">
+          
+          <center>
+
+           <%img=Image.find(l.image_id).image_path%>
+           <%=image_tag img ,:style=>"width:500px;height:50%;"%>
+       
+          </center>
+       
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+</div>
+<%t=t+1%>
+<%else%><td><i class="fa fa-eye-slash" title="No Image" style="background-color:white;cursor:pointer;padding: 3px 4px;color:#c2185b;"></td><%end%>
+<%end%>
+</tr><%end%>
+</table><br><br></div></center>
+
+
+
+
+
+<div id="Tamil" class="tabcontent">
+<center>
+<h4><b>DAMAGED</b>(Tons/Bags)</h4><% unless User.find(session[:user_id]).role.role_type=="Super Admin"%><a float="right" type="button"  data-toggle="modal" data-target="#myModaldamage" style="background-color:white;cursor:pointer">Add Damages</a><%end%>
+<table class ="table">
+ <%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"damage_date",:id=>@warehouse_session_id} do |o|%>
+<tr>
+<%if params[:to2].present?%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom2" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo2" placeholder=<%=(Date.parse(params[:to2])-1).strftime("%d-%m-%Y")%> required></td>
+<%else%>
+<td ><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom2" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo2" placeholder=<%=Date.today.strftime("%d-%m-%Y")%> required></td>
+<%end%>
+ <td><%= o.submit "Get Report", class:"btn btn-success"%></td>
+<%end%></tr></table>
+
+<table class ="table">
+<thead>
+<tr><th>DATE</th>
+<th>GRADE</th>
+<th>DAMAGED BY</th>
+<th colspan="2">Tons/Bags</th></tr>
+</thead>
+
+<%if @damage1.empty?%><br>
+<tr><td>Sorry. No Data Found!!</td></tr>
+<%else%>
+<!--%=will_paginate @damage1 %-->
+<%@damage1.map do |j|%>
+<tr><td><%=j.damage_entry_date%></td>
+<td><%=Grade.find(j.grade).grade_type%></td>
+<td><%=case j.status
+when 1
+   "Rail"
+when 2
+  "Road" 
+when 3 
+   "Return" 
+when 4
+ "Warehouse"
+ end%></td>
+<td><%=number_with_precision(j.bags_count/20.to_f, precision: 3)%></td><td><%=j.bags_count%></td>
+<%end%><%end%>
+</tr></table><br><br></div></center>
+
+
+<div id="English" class="tabcontent">
+  <center>
+<table class="table">
+<h4><b>APPROVE & REJECT REPORT</b></h4>
+
+  <%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"approve_reject_report",:id=>@warehouse_session_id} do |qq|%>
+<tr>
+
+<%unless params[:to5].present?%>
+<td>
+ <input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom5" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+
+ <td><input name="to"  style="margin-left:5%;" type="text" name="to" class="form-control txtTo" id="txtTo5" placeholder=<%=Date.today.strftime("%d-%m-%Y")%>  required></td>
+
+ <td><%= select_tag 'range', options_for_select(['All','Approve','Reject']),{include_blank:"Select",:class=>"form-control"}%></td>
+ 
+ <%else%>
+
+ <td><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom5" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y") %> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo5" placeholder=<%=(Date.parse(params[:to5])-1).strftime("%d-%m-%Y")%> required></td>
+
+<td><%= select_tag 'range', options_for_select(['All','Approve','Reject']),{include_blank:"#{params[:range]}",:class=>"form-control"}%></td>
+
+
+<%end%>
+
+
+ <td><%= qq.submit "Get Report", class:"btn btn-success"%></td></tr>
+<%end%>
+</table>
+
+<table class="table">
+<thead>
+<tr>
+<th>PARTY NAME</th>
+<th colspan="2">TOTAL QUANTITY</th>
+<th>STATUS</th>
+</thead>
+<%if @approve_reject_id.empty?%><br>
+<tr><td>Sorry. No Data Found!!</td></tr>
+<%else%>
+<tbody>
+<%@approve_reject_id.map do |r|%>
+<tr>
+<td><%=r.party_name%></td>
+<td><%=number_with_precision(r.total_quantity.to_i/20.to_f, precision: 3)%></td>
+<td><%=r.total_quantity%></td>
+<td><%=r.status==1||r.status==3||r.status==4? "Approve" : "Reject"%></td>
+<%end%></tr><%end%>
+</tbody>
+</table>
+</center>
+</div>
+
+
+
+<div id="Telugu" class="tabcontent">
+  <center>
+<table class="table">
+<h4><b>Documents</b></h4>
+
+  <%=form_for Damage.new ,:url=>{:controller=>"warehouses",:action=>"documents",:id=>@warehouse_session_id} do |qq|%>
+<tr>
+
+<%unless params[:to6].present?%>
+<td>
+ <input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom6" type="text" placeholder=<%=(Date.today).strftime("01-%m-%Y")%> required></td>
+
+ <td><input name="to"  style="margin-left:5%;" type="text" name="to" class="form-control txtTo" id="txtTo6" placeholder=<%=Date.today.strftime("%d-%m-%Y")%>  required></td>
+
+
+ <%else%>
+
+ <td><input name="from"  style="margin-left:5%;" class="form-control txtFrom" id="txtFrom6" type="text" placeholder=<%=Date.parse(params[:from]).strftime("%d-%m-%Y") %> required></td>
+
+<td><input type="text" name="to" class="form-control txtTo" id="txtTo6" placeholder=<%=(Date.parse(params[:to6])-1).strftime("%d-%m-%Y")%> required></td>
+
+
+<%end%>
+
+
+ <td><%= qq.submit "Get Report", class:"btn btn-success"%></td></tr>
+<%end%>
+</table>
+
+<table class="table">
+<thead>
+<tr>
+<th>DATE</th>
+<th>DOCUMENT NAME</th>
+<th>IMAGE</th>
+</thead>
+<%if @document.empty?%><br>
+<tr><td>Sorry. No Data Found!!</td></tr>
+<%else%>
+<tbody>
+<%ttt=1%>
+<%@document.map do |r|%>
+<tr>
+<td><%= r.created_at.strftime("%d-%m-%Y")%></td>
+<td><%=r.document_name%></td>
+
+<td><a data-toggle="modal" data-target="#myModalsss<%=ttt%>" style="background-color:white;cursor:pointer;padding: 3px 4px;color:#c2185b;"><%= image_tag r.image.image_path ,:style=>"height:50px;width:50px;"%></i></a></td>
+
+<div class="container">
+  <div class="modal fade" id="myModalsss<%=ttt%>" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"><b><%= r.document_name%></b></h4>
+        </div>
+        <div class="modal-body">
+          
+          <center>
+
+           <%img=r.image.image_path%>
+           <%=image_tag img ,:style=>"width:500px;height:50%;"%>
+       
+          </center>
+       
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+</div>
+</div>
+<%ttt=ttt+1%>
+<%end%></tr><%end%>
+</tbody>
+</table>
+</center>
+</div>
+
+
+
+
+
+<body>
+<div class="container">
+  <div class="modal fade" id="myModaldamage" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Damage</h4>
+        </div>
+        <div class="modal-body"><center>
+       <p>
+         <%=form_for @damage ,:url=>{:controller=>"warehouses",:action=>"damage_entry",:id=>@warehouse_session_id} do |i| %>
+        
+             <div ng-app="myApp" ng-controller="MyCtrl">
+               <div ng-repeat="input in inputs">
+                
+                <table class="table">
+                <tr>
+                <td><input type="text"  class="datepicker form-control" name="damage_entry_date[]" placeholder="Date" style="width:160px!important;" required/></td>
+                <script type="text/javascript">
+                $(document).ready(function(){
+                $('.datepicker').datepicker();
+                });
+                </script>  
+
+               <td> <%company_id=Warehouse.find(@warehouse_session_id).company_id%>
+                <%grade=Grade.where(:company_id=>company_id)%>
+                <%=select_tag "grade[]", options_from_collection_for_select(grade,:id,:grade_type),{:include_blank=>"Select Grade",required:true,:class=>"form-control",:style=>"width:160px!important;"}%></td>
+                </tr>
+        
+                <tr><td><input type="text" name="bags_count[]" placeholder="bags count" class="form-control" style="width:160px!important;" required/></td>
+        
+                <td><button ng-click="removeInput($index)" style="height:32px;width:160px!important;">Remove</button></td>
+
+                 </tr>
+
+               </table>
+
+            </div>
+    
+            <label class="btn btn-danger" ng-click="addInput()">Click to Add Damages</label>
+
+        </div>
+
+       </p></center>
+
+         </div>
+
+         <div class="modal-footer">
+
+         <%=  i.submit "Submit",class:"btn btn-success" %><%end%>
+
+         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+         </div>
+       </body>
+<script>
+var app = angular.module('myApp', []);
+
+app.controller('MyCtrl', ['$scope', function ($scope) {
+$scope.inputs = [];
+
+$scope.addInput = function(){
+    $scope.inputs.push({field:'', value:''});
+}
+
+$scope.removeInput = function(index){
+    $scope.inputs.splice(index,1);
+   
+}
+}]);
+</script>
+          </div>
+        </div>
+       </div>
+      </div>
+    </body>
+  </center>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+        $(function(){
+        $("#txtTo").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0'  });
+        $("#txtFrom").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+    <script type="text/javascript">
+        $(function(){
+        $("#txtTo1").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom1").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0' }).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo1").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+     <script type="text/javascript">
+        $(function(){
+        $("#txtTo2").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0'  });
+        $("#txtFrom2").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo2").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+     <script type="text/javascript">
+        $(function(){
+        $("#txtTo3").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom3").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0' }).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo3").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+    <script type="text/javascript">
+        $(function(){
+        $("#txtTo4").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom4").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0' }).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo4").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+<script type="text/javascript">
+        $(function(){
+        $("#txtTo5").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom5").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0'}).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo5").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+    <script type="text/javascript">
+        $(function(){
+        $("#txtTo6").datepicker({ dateFormat: 'dd-mm-yy' ,maxDate: '0' });
+        $("#txtFrom6").datepicker({ dateFormat: 'dd-mm-yy',maxDate: '0' }).bind("change",function(){
+            var minValue = $(this).val();
+            minValue = $.datepicker.parseDate("dd-mm-yy", minValue);
+            minValue.setDate(minValue.getDate());
+            $("#txtTo4").datepicker( "option", "minDate", minValue );
+        })
+    });
+    </script>
+
+
+<script>
+function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+
+
